@@ -64,7 +64,7 @@ class LoginScreen extends StatelessWidget {
                     verticalSpace20,
                     Text(
                       'Welcome Back\nReady to hit the road.',
-                      style: TextStylesManager.bold26,
+                      style: TextStylesManager.semibold30,
                     ),
                     verticalSpace40,
                     const LoginFieldsSection(),

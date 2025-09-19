@@ -10,8 +10,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        return const Scaffold(
-        );
+        return const Scaffold();
       },
     );
   }

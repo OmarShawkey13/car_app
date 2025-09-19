@@ -18,7 +18,7 @@ class DioHelper {
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
+            if (token != null) 'Authorization': 'Bearer $token',
           },
         ),
       );

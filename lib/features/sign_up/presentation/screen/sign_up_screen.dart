@@ -19,7 +19,23 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
+    return BlocConsumer<HomeCubit, HomeState>(
+      listener: (BuildContext context, HomeState state) {
+        if (state is HomeSignupSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.userModel.message)),
+          );
+        }
+        if (state is HomeSignupErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+        }
+      },
+      buildWhen: (previous, current) =>
+          current is HomeSignupSuccessState ||
+          current is HomeSignupErrorState ||
+          current is HomeSignupLoadingState,
       builder: (BuildContext context, HomeState state) {
         return Scaffold(
           appBar: const PrimaryAppBar(),
@@ -34,7 +50,7 @@ class SignUpScreen extends StatelessWidget {
                     verticalSpace20,
                     Text(
                       'Sign Up',
-                      style: TextStylesManager.bold26,
+                      style: TextStylesManager.semibold30,
                     ),
                     verticalSpace40,
                     const SignUpFieldsSection(),
@@ -43,7 +59,9 @@ class SignUpScreen extends StatelessWidget {
                       padding: 0,
                       label: Text('Sign Up', style: TextStylesManager.bold16),
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {}
+                        if (formKey.currentState!.validate()) {
+                          homeCubit.signUp();
+                        }
                       },
                     ),
                     verticalSpace20,

@@ -39,9 +39,9 @@ class PrimaryButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(65),
             side: withBorder
                 ? BorderSide(
-              color: borderColor,
-              width: 1,
-            )
+                    color: borderColor,
+                    width: 1,
+                  )
                 : BorderSide.none,
           ),
         ),
