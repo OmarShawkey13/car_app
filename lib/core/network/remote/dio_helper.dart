@@ -36,7 +36,7 @@ class DioHelper {
 
   static Future<Either<String, Response>> postData({
     required String url,
-    required Map<String, dynamic> data,
+    required dynamic data,
     String? token,
   }) async {
     try {
@@ -46,7 +46,7 @@ class DioHelper {
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
+            if (token != null) 'Authorization': 'Bearer $token',
           },
         ),
       );

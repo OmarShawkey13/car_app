@@ -1,3 +1,6 @@
+import 'package:car_app/core/models/user_model.dart';
+import 'package:car_app/core/network/remote/api_endpoints.dart';
+import 'package:car_app/core/network/remote/dio_helper.dart';
 import 'package:car_app/core/utils/cubit/home_state.dart';
 import 'package:car_app/main.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
   final forgetPasswordEmailController = TextEditingController();
   final phoneNumberController = TextEditingController();
 
-  Map<String,dynamic> passwordVisibility = {
+  Map<String, dynamic> passwordVisibility = {
     'loginPassword': false,
     'signUpPassword': false,
     'confirmPassword': false,
@@ -36,6 +39,33 @@ class HomeCubit extends Cubit<HomeState> {
   set isRememberMe(bool value) {
     _isRememberMe = value;
     emit(HomeToggleRememberMeState());
+  }
+
+  void login() async {
+    emit(HomeLoginLoadingState());
+    final result = await DioHelper.postData(
+      url: loginApi,
+      data: {
+        'email': loginEmailController.text,
+        'password': loginPasswordController.text,
+      },
+    );
+    result.fold(
+      (l) {
+        debugPrint(l);
+        emit(HomeLoginErrorState(l));
+      },
+      (r) {
+        final data = r.data;
+        if (data['user'] != null) {
+          final userModel = UserModel.fromJson(data);
+          emit(HomeLoginSuccessState(userModel));
+        } else {
+          final message = data['errors']?['message'] ?? data['message'];
+          emit(HomeLoginErrorState(message));
+        }
+      },
+    );
   }
 
   // 🔥 OTP Management
@@ -67,5 +97,4 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   String get otpCode => otpDigits.join();
-
 }

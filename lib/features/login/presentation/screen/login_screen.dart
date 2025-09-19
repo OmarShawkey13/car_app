@@ -19,7 +19,37 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
+    return BlocConsumer<HomeCubit, HomeState>(
+      buildWhen: (previous, current) =>
+          current is HomeTogglePasswordVisibilityState ||
+          current is HomeToggleRememberMeState ||
+          current is HomeLoginLoadingState ||
+          current is HomeLoginSuccessState ||
+          current is HomeLoginErrorState,
+      listener: (BuildContext context, HomeState state) {
+        if (state is HomeLoginSuccessState) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.userModel.message,
+              ),
+            ),
+          );
+        }
+        if (state is HomeLoginErrorState) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.error,
+              ),
+            ),
+          );
+        }
+      },
       builder: (BuildContext context, HomeState state) {
         return Scaffold(
           appBar: const PrimaryAppBar(),
