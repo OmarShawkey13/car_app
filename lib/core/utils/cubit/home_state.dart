@@ -40,34 +40,13 @@ class HomeSignupErrorState extends HomeState {
 
 class HomeCountriesLoadingState extends HomeState {}
 
-class HomeCountriesSuccessState extends HomeState {
-  final List<CountryModel> countries;
-
-  HomeCountriesSuccessState(this.countries);
-}
+class HomeCountriesSuccessState extends HomeState {}
 
 class HomeCountriesErrorState extends HomeState {
   final String error;
 
   HomeCountriesErrorState(this.error);
 }
-
-/// Locations
-class HomeLocationsLoadingState extends HomeState {}
-
-class HomeLocationsSuccessState extends HomeState {
-  final List<LocationModel> locations;
-
-  HomeLocationsSuccessState(this.locations);
-}
-
-class HomeLocationsErrorState extends HomeState {
-  final String error;
-
-  HomeLocationsErrorState(this.error);
-}
-
-class HomeLoadDataSuccessState extends HomeState {}
 
 class HomeOtpAddedState extends HomeState {}
 

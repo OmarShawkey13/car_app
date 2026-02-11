@@ -32,12 +32,12 @@ class LoginFieldsSection extends StatelessWidget {
               value!.isEmpty ? 'Please enter your password' : null,
           textInputAction: TextInputAction.done,
           keyboardType: TextInputType.visiblePassword,
-          obscureText: !homeCubit.passwordVisibility['loginPassword'],
+          obscureText: homeCubit.passwordVisibility['loginPassword'],
           suffixIcon: IconButton(
             icon: Image.asset(
               homeCubit.passwordVisibility['loginPassword']
-                  ? AssetsHelper.visibility
-                  : AssetsHelper.visibilityOff,
+                  ? AssetsHelper.visibilityOff
+                  : AssetsHelper.visibility,
               width: 24,
               height: 24,
             ),

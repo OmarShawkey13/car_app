@@ -1,5 +1,4 @@
 import 'package:car_app/core/models/country_model.dart';
-import 'package:car_app/core/models/location_model.dart';
 import 'package:car_app/core/models/user_model.dart';
 import 'package:car_app/core/network/remote/api_endpoints.dart';
 import 'package:car_app/core/network/remote/dio_helper.dart';
@@ -15,18 +14,17 @@ class HomeCubit extends Cubit<HomeState> {
 
   static HomeCubit get(BuildContext context) => BlocProvider.of(context);
 
-  final loginEmailController = TextEditingController();
-  final loginPasswordController = TextEditingController();
-  final fullNameController = TextEditingController();
-  final signUpEmailController = TextEditingController();
-  final signUpPhoneNumberController = TextEditingController();
-  final signUpPasswordController = TextEditingController();
-  final forgetPasswordEmailController = TextEditingController();
-  final phoneNumberController = TextEditingController();
+  final TextEditingController loginEmailController = .new();
+  final TextEditingController loginPasswordController = .new();
+  final TextEditingController fullNameController = .new();
+  final TextEditingController signUpEmailController = .new();
+  final TextEditingController signUpPasswordController = .new();
+  final TextEditingController forgetPasswordEmailController = .new();
+  final TextEditingController phoneNumberController = .new();
 
   Map<String, dynamic> passwordVisibility = {
-    'loginPassword': false,
-    'signUpPassword': false,
+    'loginPassword': true,
+    'signUpPassword': true,
   };
 
   set togglePasswordVisibility(String type) {
@@ -43,7 +41,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeToggleRememberMeState());
   }
 
-  void login() async {
+  Future<void> login() async {
     emit(HomeLoginLoadingState());
     final result = await DioHelper.postData(
       url: loginApi,
@@ -54,23 +52,20 @@ class HomeCubit extends Cubit<HomeState> {
     );
     result.fold(
       (l) {
-        debugPrint(l);
-        emit(HomeLoginErrorState(l));
+        debugPrint(l.toString());
+        emit(HomeLoginErrorState(l.toString()));
       },
       (r) {
         final data = r.data;
         if (data['user'] != null) {
           final userModel = UserModel.fromJson(data);
           emit(HomeLoginSuccessState(userModel));
-        } else {
-          final message = data['errors']?['message'] ?? data['message'];
-          emit(HomeLoginErrorState(message));
         }
       },
     );
   }
 
-  void signUp() async {
+  Future<void> signUp() async {
     emit(HomeSignupLoadingState());
 
     final result = await DioHelper.postData(
@@ -78,10 +73,8 @@ class HomeCubit extends Cubit<HomeState> {
       data: {
         'full_name': fullNameController.text,
         'email': signUpEmailController.text,
-        'phone': signUpPhoneNumberController.text,
         'password': signUpPasswordController.text,
         'country_id': selectedCountryId.toString(),
-        'location_id': selectedLocationId.toString(),
       },
     );
 
@@ -94,59 +87,27 @@ class HomeCubit extends Cubit<HomeState> {
         if (data['user'] != null) {
           final userModel = UserModel.fromJson(data);
           emit(HomeSignupSuccessState(userModel));
-        } else {
-          final message =
-              data['errors']?['email'] ??
-              data['errors']?['phone'] ??
-              data['message'];
-          emit(HomeSignupErrorState(message));
         }
       },
     );
   }
 
-  bool isLoading = false;
-
-  void loadData() async {
-    if (isLoading) return;
-    getCountries();
-    getLocations();
-    isLoading = true;
-    emit(HomeLoadDataSuccessState());
-  }
-
   int? selectedCountryId;
-  int? selectedLocationId;
 
   List<CountryModel> countries = [];
-  List<LocationModel> locations = [];
 
-  void getCountries() async {
+  Future<void> getCountries() async {
     emit(HomeCountriesLoadingState());
     final result = await DioHelper.getData(url: countriesApi);
     result.fold(
       (l) {
+        debugPrint(l.toString());
         emit(HomeCountriesErrorState(l));
       },
       (r) {
         final data = r.data['data'] as List;
         countries = data.map((e) => CountryModel.fromJson(e)).toList();
-        emit(HomeCountriesSuccessState(countries));
-      },
-    );
-  }
-
-  void getLocations() async {
-    emit(HomeLocationsLoadingState());
-    final result = await DioHelper.getData(url: locationsApi);
-    result.fold(
-      (l) {
-        emit(HomeLocationsErrorState(l));
-      },
-      (r) {
-        final data = r.data['data'] as List;
-        locations = data.map((e) => LocationModel.fromJson(e)).toList();
-        emit(HomeLocationsSuccessState(locations));
+        emit(HomeCountriesSuccessState());
       },
     );
   }
